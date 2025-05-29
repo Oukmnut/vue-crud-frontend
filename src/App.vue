@@ -32,6 +32,8 @@
 <script>
 import axios from 'axios';
 
+const API_BASE = process.env.VUE_APP_API_URL || 'http://localhost:3000';
+
 export default {
   data() {
     return {
@@ -41,26 +43,29 @@ export default {
   },
   methods: {
     fetchUsers() {
-      axios.get('http://localhost:3000/users')
-        .then(res => this.users = res.data);
+      axios.get(`${API_BASE}/users`)
+        .then(res => this.users = res.data)
+        .catch(err => console.error('Fetch error:', err));
     },
     saveUser() {
       const request = this.form._id
-        ? axios.put(`http://localhost:3000/users/${this.form._id}`, this.form)
-        : axios.post('http://localhost:3000/users', this.form);
+        ? axios.put(`${API_BASE}/users/${this.form._id}`, this.form)
+        : axios.post(`${API_BASE}/users`, this.form);
 
-      request.then(() => {
-        this.fetchUsers();
-        this.form = { _id: null, name: '', email: '' };
-      }).catch(err => console.error(err.response?.data));
+      request
+        .then(() => {
+          this.fetchUsers();
+          this.form = { _id: null, name: '', email: '' };
+        })
+        .catch(err => console.error('Save error:', err.response?.data || err));
     },
     editUser(user) {
       this.form = { ...user };
     },
     deleteUser(id) {
-      axios.delete(`http://localhost:3000/users/${id}`)
+      axios.delete(`${API_BASE}/users/${id}`)
         .then(() => this.fetchUsers())
-        .catch(err => console.error(err.response?.data));
+        .catch(err => console.error('Delete error:', err.response?.data || err));
     }
   },
   mounted() {
@@ -68,3 +73,9 @@ export default {
   }
 };
 </script>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+}
+</style>
