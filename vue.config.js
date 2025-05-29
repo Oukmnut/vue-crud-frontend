@@ -1,5 +1,5 @@
 module.exports = {
-  publicPath: './',
+  publicPath: './',  // or '/' if deployed to root domain, but './' safer for static sites
   outputDir: 'dist',
-  transpileDependencies: true
+  transpileDependencies: true,
 };
